@@ -16,13 +16,21 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/service ./cmd/${SERVICE_NAME}
 
 # Final stage
-FROM alpine:latest
+FROM alpine:3.22
 
 WORKDIR /app
 
-# Copy binary from builder
-COPY --from=builder /app/service .
+# Install CA certificates
+RUN apk add --no-cache ca-certificates
 
-EXPOSE 8080
+# Create non-root user
+RUN adduser -D -H appuser
+
+# Copy binary from builder
+COPY --from=builder /app/service ./service
+
+EXPOSE 8081
+
+USER appuser
 
 CMD ["./service"]
