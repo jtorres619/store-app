@@ -30,3 +30,21 @@ jobs:
 
       - name: Build products service
         run: go build ./cmd/products-service
+
+      - name: Build users Docker image
+        run: |
+          docker build \
+            --build-arg SERVICE_NAME=users-service \
+            -t users-service:${{ github.sha }} .
+
+      - name: Build orders Docker image
+        run: |
+          docker build \
+            --build-arg SERVICE_NAME=orders-service \
+            -t orders-service:${{ github.sha }} .
+
+      - name: Build products Docker image
+        run: |
+          docker build \
+            --build-arg SERVICE_NAME=products-service \
+            -t products-service:${{ github.sha }} .
