@@ -45,7 +45,7 @@ jobs:
             --build-arg SERVICE_NAME=users-service \
             -t $REGISTRY/store-app/users-service:$IMAGE_TAG .
 
-          docker push $REGISTRY/users-service:$IMAGE_TAG
+          docker push $REGISTRY/store-app/users-service:$IMAGE_TAG
 
       - name: Build orders service
         run: go build ./cmd/orders-service
