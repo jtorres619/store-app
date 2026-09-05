@@ -47,26 +47,24 @@ jobs:
 
           docker push $REGISTRY/store-app/users-service:$IMAGE_TAG
 
-      - name: Build orders service
-        run: go build ./cmd/orders-service
-
-      - name: Build products service
-        run: go build ./cmd/products-service
-
-      - name: Build users Docker image
-        run: |
-          docker build \
-            --build-arg SERVICE_NAME=users-service \
-            -t users-service:${{ github.sha }} .
-
-      - name: Build orders Docker image
+      - name: Build and push orders-service image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
             --build-arg SERVICE_NAME=orders-service \
-            -t orders-service:${{ github.sha }} .
+            -t $REGISTRY/store-app/orders-service:$IMAGE_TAG .
 
-      - name: Build products Docker image
+          docker push $REGISTRY/store-app/orders-service:$IMAGE_TAG
+
+      - name: Build and push products-service image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build \
             --build-arg SERVICE_NAME=products-service \
-            -t products-service:${{ github.sha }} .
+            -t $REGISTRY/store-app/products-service:$IMAGE_TAG .
+
+          docker push $REGISTRY/store-app/products-service:$IMAGE_TAG
