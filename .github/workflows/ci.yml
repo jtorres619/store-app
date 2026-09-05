@@ -36,8 +36,16 @@ jobs:
       - name: Run tests
         run: go test ./...
 
-      - name: Build users service
-        run: go build ./cmd/users-service
+      - name: Build and push users-service image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build \
+            --build-arg SERVICE_NAME=users-service \
+            -t $REGISTRY/users-service:$IMAGE_TAG .
+
+          docker push $REGISTRY/users-service:$IMAGE_TAG
 
       - name: Build orders service
         run: go build ./cmd/orders-service
